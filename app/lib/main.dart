@@ -35,12 +35,15 @@ class PetifyHome extends StatefulWidget {
 
 class _PetifyHomeState extends State<PetifyHome> {
   late DatabaseProvider databaseProvider;
+  bool databaseInitialized = false;
 
   @override
   void initState() {
     super.initState();
     databaseProvider = DatabaseProvider();
     databaseProvider.initializeDatabase().whenComplete(() async {
+      print("Database initialization complete");
+      databaseInitialized = true;
       setState(() {});
     });
   }
@@ -57,7 +60,7 @@ class _PetifyHomeState extends State<PetifyHome> {
               fontSize: 28),
         ),
       ),
-      body: dashboardWidget(),
+      body: databaseInitialized ? dashboardWidget() : loadingWidget(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // ignore: avoid_print
@@ -70,14 +73,20 @@ class _PetifyHomeState extends State<PetifyHome> {
   }
 
   Widget dashboardWidget() {
+    print("Rendering dashboard");
     return FutureBuilder(
         future: databaseProvider.retrieveData(),
         builder: (BuildContext context, AsyncSnapshot<Map> snapshot) {
+          print(snapshot);
           if (snapshot.hasData) {
             return Text(jsonEncode(snapshot.data));
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return loadingWidget();
           }
         });
+  }
+
+  Widget loadingWidget() {
+    return const Center(child: CircularProgressIndicator());
   }
 }

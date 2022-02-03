@@ -37,8 +37,8 @@ class DatabaseProvider {
 
   Future<Map> retrieveData() async {
     final Map data = {
-      [petTableName]: await retrievePets(),
-      [petificationTableName]: await retrievePetifications(),
+      petTableName: await retrievePets(),
+      petificationTableName: await retrievePetifications(),
     };
     return data;
   }
