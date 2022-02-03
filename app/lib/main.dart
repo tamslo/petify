@@ -2,23 +2,30 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:petify/database.dart';
+import 'package:petify/database/table_names.dart';
 
 void main() {
   runApp(const PetifyApp());
 }
+
+const appTitle = 'Petify';
 
 class PetifyApp extends StatelessWidget {
   const PetifyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    const title = 'Petify';
+    const title = appTitle;
     return MaterialApp(
       title: title,
       theme: ThemeData(
-        primarySwatch: Colors.teal,
-        fontFamily: 'Roboto',
-      ),
+          primarySwatch: Colors.teal,
+          fontFamily: 'Roboto',
+          textTheme: const TextTheme(
+            bodyText1: TextStyle(fontSize: 16.0),
+            bodyText2: TextStyle(fontSize: 16.0),
+            button: TextStyle(fontSize: 16.0),
+          )),
       home: const PetifyHome(title: title),
     );
   }
@@ -59,7 +66,10 @@ class _PetifyHomeState extends State<PetifyHome> {
               fontSize: 28),
         ),
       ),
-      body: databaseInitialized ? dashboardWidget() : loadingWidget(),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: databaseInitialized ? dashboardWidget() : loadingWidget(),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // ignore: avoid_print
@@ -76,7 +86,34 @@ class _PetifyHomeState extends State<PetifyHome> {
         future: databaseProvider.retrieveData(),
         builder: (BuildContext context, AsyncSnapshot<Map> snapshot) {
           if (snapshot.hasData) {
-            return Text(jsonEncode(snapshot.data));
+            if (snapshot.data![petTableName].isEmpty) {
+              return Column(children: [
+                Container(
+                    padding: const EdgeInsets.all(10),
+                    child: const Text(
+                      'Willkommen!',
+                      style: TextStyle(
+                        fontSize: 24.0,
+                      ),
+                    )),
+                const Text(
+                  'Starte mit $appTitle, indem Du ein Haustier über den Plus-Knopf unten rechts anlegst.',
+                )
+              ]);
+            } else {
+              final petList = Text(jsonEncode(snapshot.data![petTableName]));
+              dynamic petificationList;
+              if (snapshot.data![petificationTableName].isEmpty) {
+                petificationList = const Text(
+                    "Füge eine Petification hinzu, indem Du auf den Plus-Knopf unten rechts drückst und dann auf das Glocken-Icon.");
+              } else {
+                petificationList =
+                    Text(jsonEncode(snapshot.data![petificationTableName]));
+              }
+              return Column(
+                children: [petList, petificationList],
+              );
+            }
           } else {
             return loadingWidget();
           }

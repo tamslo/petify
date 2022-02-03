@@ -6,6 +6,7 @@ import 'package:sqflite/sqflite.dart';
 // Import table and model definitions
 // When adding a new table: add table in _initializeTables
 import 'package:petify/database/table_definition.dart';
+import 'package:petify/database/table_names.dart';
 import 'package:petify/database/models/pet.dart';
 import 'package:petify/database/models/petification.dart';
 
@@ -24,7 +25,7 @@ class DatabaseProvider {
 
   void _initializeTables() {
     final petTable = TableDefinition(
-        name: 'pets',
+        name: petTableName,
         fields: {
           'id': 'INTEGER PRIMARY KEY',
           'name': 'TEXT',
@@ -32,7 +33,7 @@ class DatabaseProvider {
         },
         model: Pet);
     final petificationTable = TableDefinition(
-        name: 'petifications',
+        name: petificationTableName,
         fields: {
           'id': 'INTEGER PRIMARY KEY',
           'petId': 'INTEGER',
