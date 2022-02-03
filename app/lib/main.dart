@@ -42,7 +42,6 @@ class _PetifyHomeState extends State<PetifyHome> {
     super.initState();
     databaseProvider = DatabaseProvider();
     databaseProvider.initializeDatabase().whenComplete(() async {
-      print("Database initialization complete");
       databaseInitialized = true;
       setState(() {});
     });
@@ -73,11 +72,9 @@ class _PetifyHomeState extends State<PetifyHome> {
   }
 
   Widget dashboardWidget() {
-    print("Rendering dashboard");
     return FutureBuilder(
         future: databaseProvider.retrieveData(),
         builder: (BuildContext context, AsyncSnapshot<Map> snapshot) {
-          print(snapshot);
           if (snapshot.hasData) {
             return Text(jsonEncode(snapshot.data));
           } else {

@@ -1,7 +1,3 @@
-const String petTableName = 'pets';
-const String petCreateStatement = 'CREATE TABLE $petTableName('
-    'id INTEGER PRIMARY KEY, name TEXT, unixBirthdate INTEGER)';
-
 class Pet {
   final int id;
   final String name;

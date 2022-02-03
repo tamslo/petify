@@ -1,9 +1,3 @@
-const String petificationTableName = 'petifications';
-const String petificationCreateStatement =
-    'CREATE TABLE $petificationTableName('
-    'id INTEGER PRIMARY KEY, petId INTEGER, description TEXT, unixTime INTEGER, '
-    'FOREIGN KEY(petId) REFERENCES pets(id))';
-
 class Petification {
   final int id;
   final int petId;
