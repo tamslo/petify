@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:petify/database.dart';
 import 'package:petify/database/table_names.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(const PetifyApp());
@@ -27,6 +29,13 @@ class PetifyApp extends StatelessWidget {
             button: TextStyle(fontSize: 16.0),
           )),
       home: const PetifyHome(title: title),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 }
@@ -73,8 +82,7 @@ class _PetifyHomeState extends State<PetifyHome> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // ignore: avoid_print
-          print(
-              'TODO: Show instances that can be added (probably include a package for this');
+          print('TODO: Show dialog to add petification');
         },
         child: const Icon(Icons.add),
       ),
@@ -90,26 +98,18 @@ class _PetifyHomeState extends State<PetifyHome> {
               return Column(children: [
                 Container(
                     padding: const EdgeInsets.all(10),
-                    child: const Text(
-                      'Willkommen!',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)!.welcome,
+                      style: const TextStyle(
                         fontSize: 24.0,
                       ),
                     )),
-                const Text(
-                  'Starte mit $appTitle, indem Du ein Haustier über den Plus-Knopf unten rechts anlegst.',
-                )
               ]);
             } else {
               final petList = Text(jsonEncode(snapshot.data![petTableName]));
               dynamic petificationList;
-              if (snapshot.data![petificationTableName].isEmpty) {
-                petificationList = const Text(
-                    "Füge eine Petification hinzu, indem Du auf den Plus-Knopf unten rechts drückst und dann auf das Glocken-Icon.");
-              } else {
-                petificationList =
-                    Text(jsonEncode(snapshot.data![petificationTableName]));
-              }
+              petificationList =
+                  Text(jsonEncode(snapshot.data![petificationTableName]));
               return Column(
                 children: [petList, petificationList],
               );
