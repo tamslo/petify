@@ -1,3 +1,5 @@
 {
-    "welcome_to_petify": "Welcome to Petify"
+    "welcome_to_petify": "Welcome to Petify",
+    "pets": "Pets",
+    "settings": "Settings"
 }

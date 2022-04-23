@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:petify/database.dart';
-import 'package:petify/database/table_names.dart';
 import 'package:petify/widgets/dashboard.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -105,6 +104,41 @@ class _PetifyHomeState extends State<PetifyHome> {
         child: databaseInitialized
             ? renderContent(databaseProvider)
             : loadingWidget(),
+      ),
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            SizedBox(
+                height: 90.0,
+                child: DrawerHeader(
+                  child: Text(AppLocalizations.of(context)!.pets),
+                )),
+            ListTile(
+              title: const Text('TODO: Render Pets and add item'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                Navigator.pop(context);
+              },
+            ),
+            SizedBox(
+                height: 90.0,
+                child: DrawerHeader(
+                  child: Text(AppLocalizations.of(context)!.settings),
+                )),
+            ListTile(
+              title: const Text('TODO: Render settings (backup, about)'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
