@@ -1,10 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:petify/database.dart';
-import 'package:petify/database/table_names.dart';
+import 'package:petify/widgets/dashboard.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:petify/widgets/loading.dart';
 
 void main() {
   runApp(const PetifyApp());
@@ -63,6 +62,18 @@ class _PetifyHomeState extends State<PetifyHome> {
     });
   }
 
+  Widget renderContent(DatabaseProvider databaseProvider) {
+    return FutureBuilder(
+        future: databaseProvider.retrieveData(),
+        builder: (BuildContext context, AsyncSnapshot<Map> snapshot) {
+          if (snapshot.hasData) {
+            return DashboardWidget(snapshot: snapshot);
+          } else {
+            return loadingWidget();
+          }
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,50 +88,10 @@ class _PetifyHomeState extends State<PetifyHome> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: databaseInitialized ? dashboardWidget() : loadingWidget(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // ignore: avoid_print
-          print('TODO: Show dialog to add petification');
-        },
-        child: const Icon(Icons.add),
+        child: databaseInitialized
+            ? renderContent(databaseProvider)
+            : loadingWidget(),
       ),
     );
-  }
-
-  Widget dashboardWidget() {
-    return FutureBuilder(
-        future: databaseProvider.retrieveData(),
-        builder: (BuildContext context, AsyncSnapshot<Map> snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data![petTableName].isEmpty) {
-              return Column(children: [
-                Container(
-                    padding: const EdgeInsets.all(10),
-                    child: Text(
-                      AppLocalizations.of(context)!.welcome,
-                      style: const TextStyle(
-                        fontSize: 24.0,
-                      ),
-                    )),
-              ]);
-            } else {
-              final petList = Text(jsonEncode(snapshot.data![petTableName]));
-              dynamic petificationList;
-              petificationList =
-                  Text(jsonEncode(snapshot.data![petificationTableName]));
-              return Column(
-                children: [petList, petificationList],
-              );
-            }
-          } else {
-            return loadingWidget();
-          }
-        });
-  }
-
-  Widget loadingWidget() {
-    return const Center(child: CircularProgressIndicator());
   }
 }
