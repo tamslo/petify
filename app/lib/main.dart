@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:petify/database.dart';
+import 'package:petify/database/table_names.dart';
 import 'package:petify/widgets/dashboard.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:petify/widgets/loading.dart';
+import 'package:petify/widgets/onboarding.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const PetifyApp());
@@ -62,12 +65,22 @@ class _PetifyHomeState extends State<PetifyHome> {
     });
   }
 
+  Future<bool> _isOnboardingFinished() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('onboardingFinished') ?? false;
+  }
+
   Widget renderContent(DatabaseProvider databaseProvider) {
     return FutureBuilder(
-        future: databaseProvider.retrieveData(),
-        builder: (BuildContext context, AsyncSnapshot<Map> snapshot) {
+        future: _isOnboardingFinished(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.hasData) {
-            return DashboardWidget(snapshot: snapshot);
+            bool onboardingFinished = snapshot.data!;
+            if (onboardingFinished) {
+              return DashboardWidget(databaseProvider: databaseProvider);
+            } else {
+              return OnboardingWidget(databaseProvider: databaseProvider);
+            }
           } else {
             return loadingWidget();
           }
@@ -86,8 +99,9 @@ class _PetifyHomeState extends State<PetifyHome> {
               fontSize: 28),
         ),
       ),
-      body: Padding(
+      body: Container(
         padding: const EdgeInsets.all(20),
+        width: double.infinity,
         child: databaseInitialized
             ? renderContent(databaseProvider)
             : loadingWidget(),
